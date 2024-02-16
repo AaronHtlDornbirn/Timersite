@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timer</title>
+
+  <style>
+    body {
+      background-color: beige;
+      color: black;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input, button {
+      padding: 8px;
+      margin-bottom: 10px;
+      border: none;
+      border-radius: 4px;
+    }
+
+    button {
+      background-color: green;
+      color: white;
+      cursor: pointer;
+    }
+
+    #timer {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>TimerSite</h1>
+
+  <label for="hours">Stunden:</label>
+  <input type="number" id="hours" min="0" value="0">
+  
+  <label for="minutes">Minuten:</label>
+  <input type="number" id="minutes" min="0" value="0">
+  
+  <label for="seconds">Sekunden:</label>
+  <input type="number" id="seconds" min="0" value="0">
+  
+  <button onclick="startTimer()">Start</button>
+  <p id="timer">00:00:00</p>
+
+  <script>
+    let timer;
+
+    function startTimer() {
+      const hours = parseInt(document.getElementById('hours').value) || 0;
+      const minutes = parseInt(document.getElementById('minutes').value) || 0;
+      const seconds = parseInt(document.getElementById('seconds').value) || 0;
+      const totalTime = hours * 3600 + minutes * 60 + seconds;
+
+      let remainingTime = totalTime;
+      clearInterval(timer);
+
+      timer = setInterval(function() {
+        const hours = Math.floor(remainingTime / 3600);
+        const minutes = Math.floor((remainingTime % 3600) / 60);
+        const seconds = remainingTime % 60;
+
+        document.getElementById('timer').innerText = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+        if (remainingTime <= 0) {
+          clearInterval(timer);
+        } else {
+          remainingTime--;
+        }
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
