@@ -1,67 +1,58 @@
 import React, { useState, useEffect } from 'react';
-import './App.css';
 
-const App = () => {
-  const [hours, setHours] = useState(0);
-  const [minutes, setMinutes] = useState(0);
+const Timer = () => {
   const [seconds, setSeconds] = useState(0);
-  const [remainingTime, setRemainingTime] = useState(0);
-  const [timer, setTimer] = useState(null);
+  const [inputValue, setInputValue] = useState('');
+  const [isRunning, setIsRunning] = useState(false);
 
   useEffect(() => {
-    if (remainingTime > 0) {
-      const interval = setInterval(() => {
-        const hrs = Math.floor(remainingTime / 3600);
-        const mins = Math.floor((remainingTime % 3600) / 60);
-        const secs = remainingTime % 60;
+    let intervalId;
 
-        setHours(hrs);
-        setMinutes(mins);
-        setSeconds(secs);
-
-        if (remainingTime <= 0) {
-          clearInterval(interval);
-          setTimer(null);
-        } else {
-          setRemainingTime(remainingTime - 1);
-        }
+    if (isRunning && seconds > 0) {
+      intervalId = setInterval(() => {
+        setSeconds((prevSeconds) => prevSeconds - 1);
       }, 1000);
-
-      setTimer(interval);
+    } else if (seconds === 0) {
+      setIsRunning(false);
     }
 
     return () => {
-      if (timer) {
-        clearInterval(timer);
-      }
+      clearInterval(intervalId);
     };
-  }, [remainingTime, timer]);
+  }, [isRunning, seconds]);
 
-  const startTimer = () => {
-    const totalSeconds = hours * 3600 + minutes * 60 + seconds;
-    setRemainingTime(totalSeconds);
+  const handleStart = () => {
+    if (!isNaN(inputValue) && inputValue > 0) {
+      setSeconds(parseInt(inputValue, 10));
+      setIsRunning(true);
+    }
+  };
+
+  const handleStop = () => {
+    setIsRunning(false);
+  };
+
+  const handleChange = (e) => {
+    setInputValue(e.target.value);
   };
 
   return (
     <div>
-      <h1>TimerSite</h1>
-
-      <label htmlFor="hours">Stunden:</label>
-      <input type="number" id="hours" min="0" value={hours} onChange={(e) => setHours(parseInt(e.target.value) || 0)} />
-
-      <label htmlFor="minutes">Minuten:</label>
-      <input type="number" id="minutes" min="0" value={minutes} onChange={(e) => setMinutes(parseInt(e.target.value) || 0)} />
-
-      <label htmlFor="seconds">Sekunden:</label>
-      <input type="number" id="seconds" min="0" value={seconds} onChange={(e) => setSeconds(parseInt(e.target.value) || 0)} />
-
       <div>
-        <button onClick={startTimer}>Start</button>
+        <label>
+          Zeit (in Sekunden):
+          <input type="text" value={inputValue} onChange={handleChange} />
+        </label>
       </div>
-
-      <p id="timer">{`${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`}</p>
+      <div>
+        <button onClick={handleStart}>Start</button>
+        <button onClick={handleStop}>Stop</button>
+      </div>
+      <div>
+        <p>Verbleibende Zeit: {seconds} Sekunden</p>
+      </div>
     </div>
   );
 };
 
-export default App;
+export default Timer;

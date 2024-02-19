@@ -1,34 +1,59 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  selector: 'app-timer',
+  template: `
+    <div>
+      <div>
+        <label>
+          Zeit (in Sekunden):
+          <input type="text" [(ngModel)]="inputValue" />
+        </label>
+      </div>
+      <div>
+        <button (click)="handleStart()">Start</button>
+        <button (click)="handleStop()">Stop</button>
+      </div>
+      <div>
+        <p>Verbleibende Zeit: {{ seconds }} Sekunden</p>
+      </div>
+    </div>
+  `,
 })
-export class AppComponent {
-  hours: number = 0;
-  minutes: number = 0;
+export class TimerComponent implements OnDestroy {
   seconds: number = 0;
-  remainingTime: number = 0;
-  displayTime: string = '00:00:00';
-  timer: any;
+  inputValue: string = '';
+  isRunning: boolean = false;
+  intervalId: any;
 
-  startTimer() {
-    const totalSeconds = this.hours * 3600 + this.minutes * 60 + this.seconds;
-    this.remainingTime = totalSeconds;
+  ngOnDestroy() {
+    this.clearInterval();
+  }
 
-    this.timer = setInterval(() => {
-      const hrs = Math.floor(this.remainingTime / 3600);
-      const mins = Math.floor((this.remainingTime % 3600) / 60);
-      const secs = this.remainingTime % 60;
-
-      this.displayTime = `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-
-      if (this.remainingTime <= 0) {
-        clearInterval(this.timer);
-      } else {
-        this.remainingTime--;
+  startInterval() {
+    this.intervalId = setInterval(() => {
+      this.seconds = this.seconds - 1;
+      if (this.seconds === 0) {
+        this.isRunning = false;
+        this.clearInterval();
       }
     }, 1000);
+  }
+
+  clearInterval() {
+    clearInterval(this.intervalId);
+  }
+
+  handleStart() {
+    if (!isNaN(+this.inputValue) && +this.inputValue > 0) {
+      this.seconds = +this.inputValue;
+      this.isRunning = true;
+      this.startInterval();
+    }
+  }
+
+  handleStop() {
+    this.isRunning = false;
+    this.clearInterval();
   }
 }
