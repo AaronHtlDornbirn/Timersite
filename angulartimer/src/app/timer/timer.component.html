@@ -1,0 +1,13 @@
+<div>
+    <div>
+      <label>Eingabe in Sekunden:</label>
+      <input type="number" #inputRef />
+      <button (click)="handleStart()" [disabled]="isRunning">
+        {{ isRunning ? 'Timer läuft' : 'Starte Timer' }}
+      </button>
+    </div>
+    <div>
+      <p>vergangene Sekunden: {{ time }}</p>
+    </div>
+  </div>
+  
